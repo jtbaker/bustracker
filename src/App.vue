@@ -1,27 +1,23 @@
 <template>
   <div id="app" class="flex flex-col h-full">
     <div
-      class="flex flex-column justify-center items-center bg-opacity-90 bg-blue-900 text-white text-lg font-bold h-40 shadow-xl border-b-2 border-black border-opacity-20 select-none"
+      class="flex flex-column justify-center items-center bg-opacity-90 bg-blue-800 text-white text-lg font-bold h-40 shadow-xl border-b-2 border-black select-none"
     >
       <p>Cap Metro Bus Locations</p>
     </div>
     <v-map class="flex h-full outline-none"> </v-map>
-    <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" /> -->
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
 import VMap from "./components/VMap.vue";
-// import HelloWorld from "./components/HelloWorld.vue";
 
 export default Vue.extend({
   name: "App",
   components: {
-    // HelloWorld,
-    VMap
-  }
+    VMap,
+  },
 });
 </script>
 

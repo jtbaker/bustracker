@@ -22,7 +22,8 @@ const style: Style = {
       data: {
         type: "FeatureCollection",
         features: []
-      }
+      },
+      attribution: "Capital Metro"
     }
   },
   layers: [
