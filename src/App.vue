@@ -3,7 +3,7 @@
     <div
       class="flex flex-column justify-center items-center bg-opacity-90 bg-blue-600 text-white text-lg font-bold h-40 shadow-xl border-b-2 border-black border-opacity-20"
     >
-    <p>App Title</p>
+      <p>App Title</p>
     </div>
     <v-map class="flex h-full outline-none"> </v-map>
     <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->

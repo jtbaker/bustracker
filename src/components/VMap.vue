@@ -4,20 +4,12 @@
 <script lang="ts">
 import Vue from "vue";
 import { mapGetters } from "vuex";
-// import { Map, Style } from "mapbox-gl";
+import { Map } from "mapbox-gl";
 
 // import { Pbf } from "../../node_modules/pbf/index"
 
-
-interface Entity {
-    alert: string;
-    id: string;
-    is_deleted: boolean;
-    trip_update: 
-}
-
 export default Vue.extend({
-  data: () => ({ m: {} as Map<any, any> }),
+  data: () => ({ m: {} as Map }),
   mounted() {
     this.$store.commit("initMap", { container: this.$refs.mymap });
     // this.m = new Map({
