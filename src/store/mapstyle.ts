@@ -63,7 +63,8 @@ const style: Style = {
         "text-field": ["get", "label"],
         "text-font": ["Open Sans Bold"],
         "text-rotation-alignment": "map",
-        "text-rotate": ["-", ["get", "bearing"], 90]
+        "text-rotate": ["-", ["get", "bearing"], 90],
+        "text-size": ["interpolate", ["linear"], ["zoom"], 8, 1, 15, 12, 22, 20]
       }
     }
   ]
