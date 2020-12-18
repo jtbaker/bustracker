@@ -37,8 +37,9 @@ const style: Style = {
       source: "buses",
       type: "symbol",
       paint: {
-        "icon-color": "orange",
-        "text-color": "black"
+        "icon-color": "purple",
+        "text-color": "black",
+        "icon-opacity": 0.7
         //   ico
         // "circle-color": "blue",
         // "circle-radius": 5,
