@@ -1,9 +1,9 @@
 <template>
   <div id="app" class="flex flex-col h-full">
     <div
-      class="flex flex-column justify-center items-center bg-opacity-90 bg-blue-900 text-white text-lg font-bold h-40 shadow-xl border-b-2 border-black border-opacity-20"
+      class="flex flex-column justify-center items-center bg-opacity-90 bg-blue-900 text-white text-lg font-bold h-40 shadow-xl border-b-2 border-black border-opacity-20 select-none"
     >
-      <p>App Title</p>
+      <p>Cap Metro Bus Locations</p>
     </div>
     <v-map class="flex h-full outline-none"> </v-map>
     <!-- <img alt="Vue logo" src="./assets/logo.png" /> -->

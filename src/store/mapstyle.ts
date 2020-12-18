@@ -14,7 +14,8 @@ const style: Style = {
       tiles: [
         "https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"
       ],
-      tileSize: 200
+      tileSize: 200,
+      attribution: "Carto Maps"
     },
     buses: {
       type: "geojson",
