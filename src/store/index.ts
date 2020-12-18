@@ -2,7 +2,7 @@
 
 import Vue from "vue";
 import Vuex from "vuex";
-import { Map, GeoJSONSource, Popup } from "mapbox-gl";
+import { Map, GeoJSONSource, Popup, ScaleControl, GeolocateControl, NavigationControl, FullscreenControl } from "mapbox-gl";
 import style from "./mapstyle";
 import { Entity } from "./types";
 import { FeatureCollection, Feature } from "geojson";
@@ -98,12 +98,18 @@ export default new Vuex.Store({
       state.map = new Map({
         container,
         style,
-        hash: true
+        hash: true,
+        boxZoom: true
       });
 
       this.dispatch("setBuses");
 
       state.popup.addTo(state.map)
+
+      state.map.addControl(new NavigationControl({showCompass: true, showZoom: true, visualizePitch: true}),  "bottom-right")
+      state.map.addControl(new GeolocateControl(), "bottom-right")
+      state.map.addControl(new ScaleControl(), "bottom-left")
+      state.map.addControl(new FullscreenControl(), "top-right")
 
       state.map.on("mousemove", "buses", e=> {
         debugger

@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="flex flex-col h-full">
     <div
-      class="flex flex-column justify-center items-center bg-opacity-90 bg-blue-800 text-white text-lg font-bold h-40 shadow-xl border-b-2 border-black select-none"
+      class="flex flex-column justify-center items-center bg-opacity-90 bg-blue-800 text-white text-lg font-bold h-20 shadow-xl border-b-2 border-black select-none"
     >
       <p>Cap Metro Bus Locations</p>
     </div>
