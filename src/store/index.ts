@@ -13,7 +13,6 @@ function JSONToTable(object: Record<string, any>): HTMLTableElement {
   const t = document.createElement("table")
   const body = document.createElement("tbody")
   for(const key in object) {
-    debugger
     if(!(typeof object[key]=="string" && object[key].slice(0,2)==`{"`)){
       const row = document.createElement("tr")
       const label = document.createElement("th")
@@ -81,7 +80,6 @@ const busPbfUri = "https://buses.jtbaker.workers.dev";
 async function updateBuses() {
   const response = await fetch(busPbfUri);
   const bufferRes = await response.arrayBuffer();
-  // debugger;
   const pbf = new Pbf(new Uint8Array(bufferRes));
   const obj = FeedMessage.read(pbf);
   return obj;
@@ -112,7 +110,6 @@ export default new Vuex.Store({
       state.map.addControl(new FullscreenControl(), "top-right")
 
       state.map.on("mousemove", "buses", e=> {
-        debugger
         state.popup.addTo(state.map).setLngLat(e.lngLat)
         const { properties } = e.features[0]
         state.popup.setDOMContent(JSONToTable(properties))
@@ -126,11 +123,6 @@ export default new Vuex.Store({
         this.dispatch("setBuses");
       }, 10000);
     },
-    // initPopup(state) {
-    //   state.popup = new Popup()
-    //   state.popup.addTo(state.map)
-    //   debugger
-    // }
   },
   actions: {
     async setBuses({ state }) {
