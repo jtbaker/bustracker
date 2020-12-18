@@ -35,7 +35,8 @@ const style: Style = {
       source: "buses",
       type: "symbol",
       paint: {
-        "icon-color": "blue"
+        "icon-color": "orange",
+        "text-color": "black"
         //   ico
         // "circle-color": "blue",
         // "circle-radius": 5,
@@ -54,11 +55,15 @@ const style: Style = {
           20,
           0.15
         ],
+        // "icon-optional": true,
         "icon-rotation-alignment": "map",
         "icon-rotate": ["-", ["get", "bearing"], 90],
         "icon-allow-overlap": true,
-        "text-field": ["get", "route_id"],
-        "text-font": ["Open Sans Bold"]
+        "text-allow-overlap": true,
+        "text-field": ["get", "label"],
+        "text-font": ["Open Sans Bold"],
+        "text-rotation-alignment": "map",
+        "text-rotate": ["-", ["get", "bearing"], 90]
       }
     }
   ]

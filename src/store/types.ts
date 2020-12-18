@@ -32,7 +32,9 @@ export interface CurrentStatus {
   options: Options;
 }
 
-export interface Options {}
+export interface Options {
+  [key: string]: string | Record<string, string>;
+}
 
 export interface Position {
   latitude: number;

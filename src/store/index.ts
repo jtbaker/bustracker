@@ -23,6 +23,7 @@ function GTFSToGeoJson(entities: Entity[]): FeatureCollection {
     if (e.vehicle) {
       const { latitude, longitude, bearing } = e.vehicle.position || {};
       const { route_id, trip_id, start_date } = e.vehicle.trip || {};
+      const { id, label, license_plate } = e.vehicle.vehicle || {};
       // const { bear}
       const feature: Feature = {
         type: "Feature",
@@ -35,6 +36,9 @@ function GTFSToGeoJson(entities: Entity[]): FeatureCollection {
           trip_id,
           start_date,
           bearing,
+          license_plate,
+          vehicle_id: id,
+          label,
           ...e.vehicle
         }
       };

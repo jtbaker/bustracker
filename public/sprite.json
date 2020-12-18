@@ -5,6 +5,7 @@
         "x": 0,
         "y": 0,
         "pixelRatio": 1,
-        "visible": true
+        "visible": true,
+        "sdf": true   
     }
 }
