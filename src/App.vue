@@ -16,8 +16,8 @@ import VMap from "./components/VMap.vue";
 export default Vue.extend({
   name: "App",
   components: {
-    VMap,
-  },
+    VMap
+  }
 });
 </script>
 

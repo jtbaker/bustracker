@@ -67,7 +67,17 @@ const style: Style = {
         "text-font": ["Open Sans Bold"],
         "text-rotation-alignment": "map",
         "text-rotate": ["-", ["get", "bearing"], 90],
-        "text-size": ["interpolate", ["linear"], ["zoom"], 8, 0.5, 15, 6, 22, 18]
+        "text-size": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          8,
+          0.5,
+          15,
+          6,
+          22,
+          18
+        ]
       }
     }
   ]
