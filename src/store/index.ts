@@ -9,6 +9,29 @@ import { FeatureCollection, Feature } from "geojson";
 
 import Pbf from "pbf";
 
+function JSONToTable(object: Record<string, any>): HTMLTableElement {
+  const t = document.createElement("table")
+  const body = document.createElement("tbody")
+  for(const key in object) {
+    debugger
+    if(!(typeof object[key]=="string" && object[key].slice(0,2)==`{"`)){
+      const row = document.createElement("tr")
+      const label = document.createElement("th")
+    
+      label.style["text-align"]= "left"
+      const val = document.createElement("td")
+      val.style["text-align"] = "left"
+      label.innerText = key
+      val.innerText = object[key]
+      row.appendChild(label)
+      row.appendChild(val)
+      body.appendChild(row)
+    }
+  }
+  t.appendChild(body)
+  return t
+}
+
 // const buffer = require("./gtfs.proto");
 
 // const reader = new Pbf(buffer);
@@ -68,7 +91,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     map: {} as Map,
-    popup: {} as Popup
+    popup: new Popup()
   },
   mutations: {
     initMap(state, { container }: { container: HTMLElement }) {
@@ -80,10 +103,28 @@ export default new Vuex.Store({
 
       this.dispatch("setBuses");
 
+      state.popup.addTo(state.map)
+
+      state.map.on("mousemove", "buses", e=> {
+        debugger
+        state.popup.addTo(state.map).setLngLat(e.lngLat)
+        const { properties } = e.features[0]
+        state.popup.setDOMContent(JSONToTable(properties))
+      })
+
+      state.map.on("mouseout", "buses", e => {
+        state.popup.remove()
+      })
+
       setInterval(async () => {
         this.dispatch("setBuses");
       }, 10000);
-    }
+    },
+    // initPopup(state) {
+    //   state.popup = new Popup()
+    //   state.popup.addTo(state.map)
+    //   debugger
+    // }
   },
   actions: {
     async setBuses({ state }) {

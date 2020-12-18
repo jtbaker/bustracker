@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="flex flex-col h-full">
     <div
-      class="flex flex-column justify-center items-center bg-opacity-90 bg-blue-600 text-white text-lg font-bold h-40 shadow-xl border-b-2 border-black border-opacity-20"
+      class="flex flex-column justify-center items-center bg-opacity-90 bg-blue-900 text-white text-lg font-bold h-40 shadow-xl border-b-2 border-black border-opacity-20"
     >
       <p>App Title</p>
     </div>

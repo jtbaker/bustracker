@@ -49,9 +49,9 @@ const style: Style = {
           ["linear"],
           ["zoom"],
           7,
-          0.003,
+          0.001,
           15,
-          0.08,
+          0.03,
           20,
           0.15
         ],
@@ -64,7 +64,7 @@ const style: Style = {
         "text-font": ["Open Sans Bold"],
         "text-rotation-alignment": "map",
         "text-rotate": ["-", ["get", "bearing"], 90],
-        "text-size": ["interpolate", ["linear"], ["zoom"], 8, 1, 15, 12, 22, 20]
+        "text-size": ["interpolate", ["linear"], ["zoom"], 8, 0.5, 15, 6, 22, 18]
       }
     }
   ]
