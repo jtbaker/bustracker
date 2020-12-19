@@ -6,8 +6,8 @@ const style: Style = {
   pitch: 60,
   bearing: 20,
   zoom: 12,
-  sprite: "http://localhost:8080/sprite",
-  glyphs: "http://localhost:8080/glyphs/{fontstack}/{range}.pbf",
+  sprite: `${window.location.href}/sprite`,
+  glyphs: `${window.location.href}/glyphs/{fontstack}/{range}.pbf`,
   sources: {
     carto: {
       type: "raster",
