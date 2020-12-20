@@ -49,3 +49,14 @@ export interface VehicleDetail {
   label: string;
   license_plate: string;
 }
+
+export interface Layer {
+  layer_id: string;
+  layer_label: string;
+  visible: boolean;
+}
+
+export interface LayerGroup {
+  basemaps: Layer[];
+  overlays: Layer[];
+}

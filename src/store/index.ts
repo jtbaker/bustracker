@@ -12,10 +12,17 @@ import {
   FullscreenControl
 } from "mapbox-gl";
 import style from "./mapstyle";
-import { Entity } from "./types";
+import { Entity, LayerGroup, Layer } from "./types";
 import { FeatureCollection, Feature } from "geojson";
 
 import Pbf from "pbf";
+
+
+function capitalize(word: string): string {
+  const words = word.split("_").map(v=>v.charAt(0).toUpperCase() + v.slice(1,))
+  return words.join(" ")
+}
+
 
 function JSONToTable(object: Record<string, any>): HTMLTableElement {
   const t = document.createElement("table");
@@ -28,7 +35,7 @@ function JSONToTable(object: Record<string, any>): HTMLTableElement {
       label.style["text-align"] = "left";
       const val = document.createElement("td");
       val.style["text-align"] = "left";
-      label.innerText = key;
+      label.innerText = capitalize(key);
       val.innerText = object[key];
       row.appendChild(label);
       row.appendChild(val);
@@ -92,12 +99,22 @@ async function updateBuses() {
   const obj = FeedMessage.read(pbf);
   return obj;
 }
+
 Vue.use(Vuex);
+
+const layers: LayerGroup = {
+  basemaps: [
+    { layer_id: "carto", layer_label: "Carto", visible: true },
+    { layer_id: "google", layer_label: "Google", visible: false }
+  ],
+  overlays: [{ layer_id: "buses", layer_label: "Buses", visible: true }]
+};
 
 export default new Vuex.Store({
   state: {
     map: {} as Map,
-    popup: new Popup()
+    popup: new Popup(),
+    layers
   },
   mutations: {
     initMap(state, { container }: { container: HTMLElement }) {
@@ -137,6 +154,20 @@ export default new Vuex.Store({
       setInterval(async () => {
         this.dispatch("setBuses");
       }, 10000);
+    },
+    toggleLayer(
+      state,
+      {
+        layer,
+        group,
+        visible
+      }: { layer: Layer; group: LayerGroup; visible: boolean }
+    ) {
+      state.map.setLayoutProperty(
+        layer.layer_id,
+        "visibility",
+        visible ? "visible" : "none"
+      );
     }
   },
   actions: {

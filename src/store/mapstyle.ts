@@ -17,6 +17,11 @@ const style: Style = {
       tileSize: 200,
       attribution: "Carto Maps"
     },
+    google: {
+      type: "raster",
+      tileSize: 200,
+      tiles: ["https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"]
+    },
     buses: {
       type: "geojson",
       data: {
@@ -33,13 +38,21 @@ const style: Style = {
       type: "raster"
     },
     {
+      id: "google",
+      source: "google",
+      type: "raster",
+      layout: {
+        visibility: "none"
+      }
+    },
+    {
       id: "buses",
       source: "buses",
       type: "symbol",
       paint: {
-        "icon-color": "purple",
+        "icon-color": "red",
         "text-color": "black",
-        "icon-opacity": 0.7
+        "icon-opacity": 0.9
         //   ico
         // "circle-color": "blue",
         // "circle-radius": 5,

@@ -1,11 +1,19 @@
 <template>
-  <div ref="mymap"></div>
+  <div ref="mymap">
+    <layer-control
+      :basemaps="[
+        { layer_id: 'carto', layer_name: 'Carto' },
+        { layer_id: 'google', layer_name: 'Google' }
+      ]"
+      :overlays="[{ layer_id: 'buses', layer_name: 'Buses' }]"
+    />
+  </div>
 </template>
 <script lang="ts">
 import Vue from "vue";
 import { mapGetters } from "vuex";
 import { Map } from "mapbox-gl";
-
+import LayerControl from "./LayerControl.vue";
 // import { Pbf } from "../../node_modules/pbf/index"
 
 export default Vue.extend({
@@ -21,6 +29,9 @@ export default Vue.extend({
   },
   computed: {
     ...mapGetters(["map"])
+  },
+  components: {
+    LayerControl
   }
 });
 </script>
