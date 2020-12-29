@@ -25,30 +25,35 @@ function capitalize(word: string): string {
 }
 
 function setHoverFeatureListener(layerId: string, source: string, map: Map) {
-  let hoverFeatureId: number = null
-  map.on("mousemove", layerId, e=> {
-    const { features } = e
-    const feature = features.length ? features[0] : {id: null}
-    const { id } = feature
-    if(id) {
-      map.setFeatureState(
-        {source, id }, {hover: true}
-      )
-    } else {
-      map.setFeatureState({source, id: hoverFeatureId}, {hover: false})
+  let hoverFeatureIds: number[] = [];
+  map.on("mousemove", layerId, async (e) => {
+    const { features } = e;
+    const feature = features.length ? features[0] : { id: null };
+    const { id } = feature;
+    if (id) {
+      hoverFeatureIds.push(id)
     }
-    hoverFeatureId = id
-
-  })
-
-  map.on("mouseout", layerId, e=> {
-    if(hoverFeatureId) {
-      debugger
-      map.setFeatureState(
-        {source, id: hoverFeatureId}, {hover: false}
-      )
+    for(const v of hoverFeatureIds) {
+      map.setFeatureState({ source, id: v}, { hover: v === id && id ? true : false });
     }
-  })
+    hoverFeatureIds = hoverFeatureIds.filter(v=>v===id && v)
+    // else {
+    //   hoverFeatureIds.forEach(v=> {
+    //     map.setFeatureState({source: id: v}, {hover: false})
+    //   })
+    //   map.setFeatureState({ source, id: hoverFeatureId }, { hover: false });
+    //   hoverFeatureId = id
+    // }
+  });
+
+  map.on("mouseleave", layerId, (e) => {
+    debugger
+    hoverFeatureIds.forEach(v=> {
+      map.setFeatureState({ source, id: v}, { hover: false });
+    })
+    hoverFeatureIds = []
+  });
+
 }
 
 function JSONToTable(object: Record<string, any>): string {
@@ -172,8 +177,13 @@ const layers: LayerGroup = {
       layer_id: "routes",
       layer_label: "Routes",
       visible: true,
-      sublayers: ROUTE_TYPES.map(v=>({key: v, label: v})),
+      sublayers: ROUTE_TYPES.map((v) => ({ key: v, label: v })),
     },
+    {
+      layer_id: "stops",
+      layer_label: "Stops",
+      visible: true
+    }
   ],
 };
 
@@ -192,7 +202,7 @@ export default new Vuex.Store({
         boxZoom: true,
       });
 
-      setHoverFeatureListener("routes", "routes", state.map)
+      setHoverFeatureListener("routes", "routes", state.map);
 
       this.dispatch("setBuses");
 
