@@ -1,12 +1,6 @@
 <template>
   <div ref="mymap">
-    <layer-control
-      :basemaps="[
-        { layer_id: 'carto', layer_name: 'Carto' },
-        { layer_id: 'google', layer_name: 'Google' }
-      ]"
-      :overlays="[{ layer_id: 'buses', layer_name: 'Buses' }]"
-    />
+    <layer-control/>
   </div>
 </template>
 <script lang="ts">
@@ -28,7 +22,7 @@ export default Vue.extend({
     // this.$emit("mapload", this.m);
   },
   computed: {
-    ...mapGetters(["map"])
+    ...mapGetters(["map", "layers"])
   },
   components: {
     LayerControl

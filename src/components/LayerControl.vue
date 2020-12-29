@@ -8,15 +8,16 @@
     </div>
     <div id="basemaps" class="border-b border-black">
       <h3 class="text-md">Basemap</h3>
-      <div v-for="layer in basemaps" :key="layer.layer_id" class="p-1">
+      <div v-for="layer in layers.basemaps" :key="layer.layer_id" class="p-1">
         <label class="space-x-2 flex items-center">
           <input
             type="radio"
-            :name="basemaps"
+            name="basemaps"
+            :checked="layer.visible"
             @change="
               ({ target }) => {
                 toggleLayer(layer.layer_id, target.checked);
-                basemaps
+                layers.basemaps
                   .filter(v => v.layer_id != layer.layer_id)
                   .forEach(v => toggleLayer(v.layer_id, !target.checked));
               }
@@ -24,24 +25,25 @@
           />
           <span
             class="select-none hover:border-opacity-50 hover:border hover:shadow-sm cursor-pointer"
-            >{{ layer.layer_name }}</span
+            >{{ layer.layer_label }}</span
           >
         </label>
       </div>
     </div>
-    <hr v-if="overlays.length" />
+    <hr v-if="layers.overlays.length" />
     <div id="overlays">
-      <div v-for="layer in overlays" :key="layer.layer_id" class="p-1">
+      <div v-for="layer in layers.overlays" :key="layer.layer_id" class="p-1">
         <label class="space-x-2 flex items-center"
           ><input
             type="checkbox"
             @change="
               ({ target }) => toggleLayer(layer.layer_id, target.checked)
             "
+            v-model="layer.visible"
           />
           <span
             class="select-none hover:border-opacity-50 hover:border hover:border-black hover:shadow-sm cursor-pointer"
-            >{{ layer.layer_name }}</span
+            >{{ layer.layer_label }}</span
           >
         </label>
       </div>
@@ -55,14 +57,6 @@ import { mapGetters } from "vuex";
 import { Layer } from "../store/types";
 
 export default Vue.extend({
-  props: {
-    basemaps: {
-      type: Array as () => Layer[]
-    },
-    overlays: {
-      type: Array as () => Layer[]
-    }
-  },
   methods: {
     toggleLayer(layerId: string, visible: boolean) {
       debugger;
@@ -74,7 +68,7 @@ export default Vue.extend({
     }
   },
   computed: {
-    ...mapGetters(["map", "popup"])
+    ...mapGetters(["map", "popup", "layers"])
   }
 });
 </script>

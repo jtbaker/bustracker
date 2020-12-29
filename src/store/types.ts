@@ -54,6 +54,12 @@ export interface Layer {
   layer_id: string;
   layer_label: string;
   visible: boolean;
+  sublayers?: SubLayer[];
+}
+
+export interface SubLayer {
+  key: string;
+  label: string;
 }
 
 export interface LayerGroup {

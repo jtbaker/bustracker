@@ -12,7 +12,9 @@ const style: Style = {
     carto: {
       type: "raster",
       tiles: [
-        "https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"
+        'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+        'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+        'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
       ],
       tileSize: 200,
       attribution: "Carto Maps"
@@ -29,6 +31,10 @@ const style: Style = {
         features: []
       },
       attribution: "Capital Metro"
+    },
+    routes: {
+      type: "geojson",
+      data: `${window.location.origin}/routes.geojson`
     }
   },
   layers: [
@@ -43,6 +49,46 @@ const style: Style = {
       type: "raster",
       layout: {
         visibility: "none"
+      }
+    },
+    {
+      id: "routes",
+      type: "line",
+      source: "routes",
+      paint: {
+        "line-color": ["concat", "#", ["get", "ROUTECOLOR"]],
+        "line-width": ["interpolate", ["linear"], ["zoom"], 10, 1, 20, 8],
+        "line-opacity": ["case", ['boolean', ['feature-state', 'hover'], false], 0.9, 0.2]
+      },
+      layout: {
+      }
+    },
+    {
+      id: "route-labels",
+      type: "symbol",
+      source: "routes",
+      paint: {
+        "text-color": ["concat", "#", ["get", "TEXTCOLOR"]]
+        // "text-color": "white"
+      },
+      layout: {
+        "text-field": ["get", "ROUTENAME"],
+        "icon-optional": true,
+        "text-size": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          8,
+          2,
+          15,
+          10,
+          22,
+          30
+        ],
+        "text-font": ["Open Sans Bold"],
+        "icon-rotation-alignment": "map",
+        "icon-ignore-placement": true,
+        "symbol-placement": "line"
       }
     },
     {

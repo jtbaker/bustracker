@@ -9,7 +9,7 @@ import {
   ScaleControl,
   GeolocateControl,
   NavigationControl,
-  FullscreenControl
+  FullscreenControl,
 } from "mapbox-gl";
 import style from "./mapstyle";
 import { Entity, LayerGroup, Layer } from "./types";
@@ -17,32 +17,76 @@ import { FeatureCollection, Feature } from "geojson";
 
 import Pbf from "pbf";
 
-
 function capitalize(word: string): string {
-  const words = word.split("_").map(v=>v.charAt(0).toUpperCase() + v.slice(1,))
-  return words.join(" ")
+  const words = word
+    .split("_")
+    .map((v) => v.charAt(0).toUpperCase() + v.slice(1));
+  return words.join(" ");
 }
 
-
-function JSONToTable(object: Record<string, any>): HTMLTableElement {
-  const t = document.createElement("table");
-  const body = document.createElement("tbody");
-  for (const key in object) {
-    if (!(typeof object[key] == "string" && object[key].slice(0, 2) == `{"`)) {
-      const row = document.createElement("tr");
-      const label = document.createElement("th");
-
-      label.style["text-align"] = "left";
-      const val = document.createElement("td");
-      val.style["text-align"] = "left";
-      label.innerText = capitalize(key);
-      val.innerText = object[key];
-      row.appendChild(label);
-      row.appendChild(val);
-      body.appendChild(row);
+function setHoverFeatureListener(layerId: string, source: string, map: Map) {
+  let hoverFeatureId: number = null
+  map.on("mousemove", layerId, e=> {
+    const { features } = e
+    const feature = features.length ? features[0] : {id: null}
+    const { id } = feature
+    if(id) {
+      map.setFeatureState(
+        {source, id }, {hover: true}
+      )
+    } else {
+      map.setFeatureState({source, id: hoverFeatureId}, {hover: false})
     }
-  }
-  t.appendChild(body);
+    hoverFeatureId = id
+
+  })
+
+  map.on("mouseout", layerId, e=> {
+    if(hoverFeatureId) {
+      debugger
+      map.setFeatureState(
+        {source, id: hoverFeatureId}, {hover: false}
+      )
+    }
+  })
+}
+
+function JSONToTable(object: Record<string, any>): string {
+  const t = `
+  <table>
+    <tbody>
+    ${Object.keys(object)
+      .map((k) => {
+        const value = object[k];
+        return typeof object[k] !== "string"
+          ? ""
+          : `
+      <tr>
+        <th>${capitalize(k)}</th><td>${value}</td>
+      </tr>`;
+      })
+      .join("")}
+    </tbody>
+  </table>
+  `;
+  // const t = document.createElement("table");
+  // const body = document.createElement("tbody");
+  // for (const key in object) {
+  //   if (!(typeof object[key] == "string" && object[key].slice(0, 2) == `{"`)) {
+  //     const row = document.createElement("tr");
+  //     const label = document.createElement("th");
+
+  //     label.style["text-align"] = "left";
+  //     const val = document.createElement("td");
+  //     val.style["text-align"] = "left";
+  //     label.innerText = capitalize(key);
+  //     val.innerText = object[key];
+  //     row.appendChild(label);
+  //     row.appendChild(val);
+  //     body.appendChild(row);
+  //   }
+  // }
+  // t.appendChild(body);
   return t;
 }
 
@@ -50,10 +94,25 @@ function JSONToTable(object: Record<string, any>): HTMLTableElement {
 
 // const reader = new Pbf(buffer);
 
+const ROUTE_TYPES = [
+  "Local",
+  "High Frequency",
+  "UT Shuttle",
+  "Crosstown",
+  "Rail",
+  "E-Bus",
+  "Feeder",
+  "Special",
+  "Express",
+  null,
+  "Night Owl",
+  "Flyer",
+];
+
 function GTFSToGeoJson(entities: Entity[]): FeatureCollection {
   const fc: FeatureCollection = {
     type: "FeatureCollection",
-    features: []
+    features: [],
   };
 
   for (const e of entities) {
@@ -66,7 +125,7 @@ function GTFSToGeoJson(entities: Entity[]): FeatureCollection {
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [longitude, latitude]
+          coordinates: [longitude, latitude],
         },
         properties: {
           route_id,
@@ -76,8 +135,8 @@ function GTFSToGeoJson(entities: Entity[]): FeatureCollection {
           license_plate,
           vehicle_id: id,
           label,
-          ...e.vehicle
-        }
+          ...e.vehicle,
+        },
       };
       fc.features.push(feature);
     }
@@ -105,16 +164,24 @@ Vue.use(Vuex);
 const layers: LayerGroup = {
   basemaps: [
     { layer_id: "carto", layer_label: "Carto", visible: true },
-    { layer_id: "google", layer_label: "Google", visible: false }
+    { layer_id: "google", layer_label: "Google", visible: false },
   ],
-  overlays: [{ layer_id: "buses", layer_label: "Buses", visible: true }]
+  overlays: [
+    { layer_id: "buses", layer_label: "Buses", visible: true },
+    {
+      layer_id: "routes",
+      layer_label: "Routes",
+      visible: true,
+      sublayers: ROUTE_TYPES.map(v=>({key: v, label: v})),
+    },
+  ],
 };
 
 export default new Vuex.Store({
   state: {
     map: {} as Map,
-    popup: new Popup(),
-    layers
+    popup: new Popup({ className: "tooltip", offset: [0, -20] }),
+    layers,
   },
   mutations: {
     initMap(state, { container }: { container: HTMLElement }) {
@@ -122,8 +189,10 @@ export default new Vuex.Store({
         container,
         style,
         hash: true,
-        boxZoom: true
+        boxZoom: true,
       });
+
+      setHoverFeatureListener("routes", "routes", state.map)
 
       this.dispatch("setBuses");
 
@@ -133,7 +202,7 @@ export default new Vuex.Store({
         new NavigationControl({
           showCompass: true,
           showZoom: true,
-          visualizePitch: true
+          visualizePitch: true,
         }),
         "bottom-right"
       );
@@ -141,10 +210,11 @@ export default new Vuex.Store({
       state.map.addControl(new ScaleControl(), "bottom-left");
       state.map.addControl(new FullscreenControl(), "top-right");
 
-      state.map.on("mousemove", "buses", e => {
+      state.map.on("mousemove", "buses", (e) => {
         state.popup.addTo(state.map).setLngLat(e.lngLat);
         const { properties } = e.features[0];
-        state.popup.setDOMContent(JSONToTable(properties));
+
+        state.popup.setHTML(JSONToTable(properties));
       });
 
       state.map.on("mouseout", "buses", () => {
@@ -160,7 +230,7 @@ export default new Vuex.Store({
       {
         layer,
         group,
-        visible
+        visible,
       }: { layer: Layer; group: LayerGroup; visible: boolean }
     ) {
       state.map.setLayoutProperty(
@@ -168,7 +238,7 @@ export default new Vuex.Store({
         "visibility",
         visible ? "visible" : "none"
       );
-    }
+    },
   },
   actions: {
     async setBuses({ state }) {
@@ -176,12 +246,15 @@ export default new Vuex.Store({
       const geojson = GTFSToGeoJson(obj.entity);
       const buses = state.map.getSource("buses") as GeoJSONSource;
       buses.setData(geojson);
-    }
+    },
   },
   getters: {
     map(state) {
       return state.map;
-    }
+    },
+    layers(state) {
+      return state.layers;
+    },
   },
-  modules: {}
+  modules: {},
 });
