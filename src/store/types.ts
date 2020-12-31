@@ -51,7 +51,7 @@ export interface VehicleDetail {
 }
 
 export interface Layer {
-  layer_id: string;
+  layer_ids: string[];
   layer_label: string;
   visible: boolean;
   sublayers?: SubLayer[];
@@ -65,4 +65,27 @@ export interface SubLayer {
 export interface LayerGroup {
   basemaps: Layer[];
   overlays: Layer[];
+}
+
+export interface Feature {
+  type: string;
+  properties: Properties;
+  bbox: number[];
+  geometry: Geometry;
+}
+
+export interface Geometry {
+  type: string;
+  coordinates: number[];
+}
+
+export interface Properties {
+  place_id: number;
+  osm_type: string;
+  osm_id: number;
+  display_name: string;
+  place_rank: number;
+  category: string;
+  type: string;
+  importance: number;
 }

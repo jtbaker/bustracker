@@ -1,6 +1,9 @@
 <template>
   <div ref="mymap">
-    <layer-control/>
+    <div class="fixed space-y-2 z-50 my-2 ml-2">
+      <layer-control />
+      <geocoder />
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -8,6 +11,7 @@ import Vue from "vue";
 import { mapGetters } from "vuex";
 import { Map } from "mapbox-gl";
 import LayerControl from "./LayerControl.vue";
+import Geocoder from "./Geocoder.vue";
 // import { Pbf } from "../../node_modules/pbf/index"
 
 export default Vue.extend({
@@ -25,7 +29,8 @@ export default Vue.extend({
     ...mapGetters(["map", "layers"])
   },
   components: {
-    LayerControl
+    LayerControl,
+    Geocoder
   }
 });
 </script>

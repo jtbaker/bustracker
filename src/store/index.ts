@@ -6,10 +6,12 @@ import {
   Map,
   GeoJSONSource,
   Popup,
+  Marker,
   ScaleControl,
   GeolocateControl,
   NavigationControl,
   FullscreenControl,
+  LngLat
 } from "mapbox-gl";
 import style from "./mapstyle";
 import { Entity, LayerGroup, Layer } from "./types";
@@ -20,23 +22,43 @@ import Pbf from "pbf";
 function capitalize(word: string): string {
   const words = word
     .split("_")
-    .map((v) => v.charAt(0).toUpperCase() + v.slice(1));
+    .map(v => v.charAt(0).toUpperCase() + v.slice(1));
   return words.join(" ");
+}
+
+function bearing(p1: LngLat, p2: LngLat): number {
+  const { lng: x1, lat: y1 } = p1;
+  const { lng: x2, lat: y2 } = p2;
+  const degrees = Math.atan2(x2 - x1, y2 - y1) * (180 / Math.PI);
+  return (degrees + 360) % 360;
+}
+
+export function easeToBeartingTransform(map: Map, to: LngLat) {
+  const p1 = map.getCenter();
+  const targetBearing = (bearing(p1, to) + 180) % 360;
+  const zoom = Math.random() + 8 * (Math.random() + 1);
+  map.easeTo({ center: to, bearing: targetBearing, pitch: 45, zoom, duration: 1000 });
 }
 
 function setHoverFeatureListener(layerId: string, source: string, map: Map) {
   let hoverFeatureIds: number[] = [];
-  map.on("mousemove", layerId, async (e) => {
+  map.on("mousemove", layerId, async e => {
     const { features } = e;
-    const feature = features.length ? features[0] : { id: null };
-    const { id } = feature;
-    if (id) {
-      hoverFeatureIds.push(id)
+    const ids = features.map(v => v.id);
+    // const feature = features.length ? features[0] : { id: null };
+    // const { id } = feature;
+    // hoverFeatureIds.
+    for (const id of ids) {
+      hoverFeatureIds.push(id as number);
     }
-    for(const v of hoverFeatureIds) {
-      map.setFeatureState({ source, id: v}, { hover: v === id && id ? true : false });
+    // hoverFeatureIds.push(id)
+    for (const v of hoverFeatureIds) {
+      map.setFeatureState(
+        { source, id: v },
+        { hover: ids.includes(v) && v ? true : false }
+      );
     }
-    hoverFeatureIds = hoverFeatureIds.filter(v=>v===id && v)
+    hoverFeatureIds = hoverFeatureIds.filter(v => ids.includes(v) && v);
     // else {
     //   hoverFeatureIds.forEach(v=> {
     //     map.setFeatureState({source: id: v}, {hover: false})
@@ -46,14 +68,12 @@ function setHoverFeatureListener(layerId: string, source: string, map: Map) {
     // }
   });
 
-  map.on("mouseleave", layerId, (e) => {
-    debugger
-    hoverFeatureIds.forEach(v=> {
-      map.setFeatureState({ source, id: v}, { hover: false });
-    })
-    hoverFeatureIds = []
+  map.on("mouseleave", layerId, () => {
+    hoverFeatureIds.forEach(v => {
+      map.setFeatureState({ source, id: v }, { hover: false });
+    });
+    hoverFeatureIds = [];
   });
-
 }
 
 function JSONToTable(object: Record<string, any>): string {
@@ -61,7 +81,7 @@ function JSONToTable(object: Record<string, any>): string {
   <table>
     <tbody>
     ${Object.keys(object)
-      .map((k) => {
+      .map(k => {
         const value = object[k];
         return typeof object[k] !== "string"
           ? ""
@@ -111,13 +131,13 @@ const ROUTE_TYPES = [
   "Express",
   null,
   "Night Owl",
-  "Flyer",
+  "Flyer"
 ];
 
 function GTFSToGeoJson(entities: Entity[]): FeatureCollection {
   const fc: FeatureCollection = {
     type: "FeatureCollection",
-    features: [],
+    features: []
   };
 
   for (const e of entities) {
@@ -130,7 +150,7 @@ function GTFSToGeoJson(entities: Entity[]): FeatureCollection {
         type: "Feature",
         geometry: {
           type: "Point",
-          coordinates: [longitude, latitude],
+          coordinates: [longitude, latitude]
         },
         properties: {
           route_id,
@@ -140,8 +160,8 @@ function GTFSToGeoJson(entities: Entity[]): FeatureCollection {
           license_plate,
           vehicle_id: id,
           label,
-          ...e.vehicle,
-        },
+          ...e.vehicle
+        }
       };
       fc.features.push(feature);
     }
@@ -168,30 +188,31 @@ Vue.use(Vuex);
 
 const layers: LayerGroup = {
   basemaps: [
-    { layer_id: "carto", layer_label: "Carto", visible: true },
-    { layer_id: "google", layer_label: "Google", visible: false },
+    { layer_ids: ["carto"], layer_label: "Carto", visible: true },
+    { layer_ids: ["google"], layer_label: "Google", visible: false }
   ],
   overlays: [
-    { layer_id: "buses", layer_label: "Buses", visible: true },
+    { layer_ids: ["buses"], layer_label: "Buses", visible: true },
     {
-      layer_id: "routes",
+      layer_ids: ["routes", "route-labels"],
       layer_label: "Routes",
       visible: true,
-      sublayers: ROUTE_TYPES.map((v) => ({ key: v, label: v })),
+      sublayers: ROUTE_TYPES.map(v => ({ key: v, label: v }))
     },
     {
-      layer_id: "stops",
+      layer_ids: ["stops"],
       layer_label: "Stops",
       visible: true
     }
-  ],
+  ]
 };
 
 export default new Vuex.Store({
   state: {
     map: {} as Map,
+    marker: new Marker({ color: "orange" }),
     popup: new Popup({ className: "tooltip", offset: [0, -20] }),
-    layers,
+    layers
   },
   mutations: {
     initMap(state, { container }: { container: HTMLElement }) {
@@ -199,7 +220,7 @@ export default new Vuex.Store({
         container,
         style,
         hash: true,
-        boxZoom: true,
+        boxZoom: true
       });
 
       setHoverFeatureListener("routes", "routes", state.map);
@@ -212,7 +233,7 @@ export default new Vuex.Store({
         new NavigationControl({
           showCompass: true,
           showZoom: true,
-          visualizePitch: true,
+          visualizePitch: true
         }),
         "bottom-right"
       );
@@ -220,7 +241,7 @@ export default new Vuex.Store({
       state.map.addControl(new ScaleControl(), "bottom-left");
       state.map.addControl(new FullscreenControl(), "top-right");
 
-      state.map.on("mousemove", "buses", (e) => {
+      state.map.on("mousemove", "buses", e => {
         state.popup.addTo(state.map).setLngLat(e.lngLat);
         const { properties } = e.features[0];
 
@@ -238,17 +259,18 @@ export default new Vuex.Store({
     toggleLayer(
       state,
       {
-        layer,
+        layer_id,
         group,
-        visible,
-      }: { layer: Layer; group: LayerGroup; visible: boolean }
+        visible
+      }: { layer_id: string; group: LayerGroup; visible: boolean }
     ) {
       state.map.setLayoutProperty(
-        layer.layer_id,
+        layer_id,
         "visibility",
         visible ? "visible" : "none"
       );
-    },
+      const n = group;
+    }
   },
   actions: {
     async setBuses({ state }) {
@@ -256,7 +278,7 @@ export default new Vuex.Store({
       const geojson = GTFSToGeoJson(obj.entity);
       const buses = state.map.getSource("buses") as GeoJSONSource;
       buses.setData(geojson);
-    },
+    }
   },
   getters: {
     map(state) {
@@ -265,6 +287,9 @@ export default new Vuex.Store({
     layers(state) {
       return state.layers;
     },
+    marker(state) {
+      return state.marker;
+    }
   },
-  modules: {},
+  modules: {}
 });

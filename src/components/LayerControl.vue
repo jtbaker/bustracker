@@ -1,14 +1,18 @@
 <template>
   <div
-    class="flex flex-col bg-blue-100 z-50 bg-opacity-90 fixed mt-2 ml-2 border border-black shadow-md border-opacity-50 rounded-sm p-2"
+    class="bg-blue-100 z-50 bg-opacity-90 border border-black shadow-md border-opacity-50 rounded-sm p-2"
   >
     <div>
       <h2 class="text-md font-bold">Layer Control</h2>
-      <hr class="border-b border-black" />
+      <hr />
     </div>
     <div id="basemaps" class="border-b border-black">
       <h3 class="text-md">Basemap</h3>
-      <div v-for="layer in layers.basemaps" :key="layer.layer_id" class="p-1">
+      <div
+        v-for="layer in layers.basemaps"
+        :key="layer.layer_label"
+        class="p-1"
+      >
         <label class="space-x-2 flex items-center">
           <input
             type="radio"
@@ -16,10 +20,16 @@
             :checked="layer.visible"
             @change="
               ({ target }) => {
-                toggleLayer(layer.layer_id, target.checked);
+                layer.layer_ids.forEach(v => {
+                  toggleLayer(v, target.checked);
+                });
                 layers.basemaps
-                  .filter(v => v.layer_id != layer.layer_id)
-                  .forEach(v => toggleLayer(v.layer_id, !target.checked));
+                  .filter(v => v.layer_label != layer.layer_label)
+                  .forEach(v => {
+                    v.layer_ids.forEach(key => {
+                      toggleLayer(key, !target.checked);
+                    });
+                  });
               }
             "
           />
@@ -32,12 +42,20 @@
     </div>
     <hr v-if="layers.overlays.length" />
     <div id="overlays">
-      <div v-for="layer in layers.overlays" :key="layer.layer_id" class="p-1">
+      <div
+        v-for="layer in layers.overlays"
+        :key="layer.layer_label"
+        class="p-1"
+      >
         <label class="space-x-2 flex items-center"
           ><input
             type="checkbox"
             @change="
-              ({ target }) => toggleLayer(layer.layer_id, target.checked)
+              ({ target }) => {
+                layer.layer_ids.forEach(k => {
+                  toggleLayer(k, target.checked);
+                });
+              }
             "
             v-model="layer.visible"
           />
@@ -54,12 +72,11 @@
 <script lang="ts">
 import Vue from "vue";
 import { mapGetters } from "vuex";
-import { Layer } from "../store/types";
+// import { Layer } from "../store/types";
 
 export default Vue.extend({
   methods: {
     toggleLayer(layerId: string, visible: boolean) {
-      debugger;
       this.map.setLayoutProperty(
         layerId,
         "visibility",
