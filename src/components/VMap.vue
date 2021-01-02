@@ -3,6 +3,7 @@
     <div class="fixed space-y-2 z-50 my-2 ml-2">
       <layer-control />
       <geocoder />
+      <map-tooltip/>
     </div>
   </div>
 </template>
@@ -12,25 +13,21 @@ import { mapGetters } from "vuex";
 import { Map } from "mapbox-gl";
 import LayerControl from "./LayerControl.vue";
 import Geocoder from "./Geocoder.vue";
+import MapTooltip from "./MapTooltip.vue";
 // import { Pbf } from "../../node_modules/pbf/index"
 
 export default Vue.extend({
-  data: () => ({ m: {} as Map }),
+  // data: () => ({ m: {} as Map }),
   mounted() {
     this.$store.commit("initMap", { container: this.$refs.mymap });
-    // this.m = new Map({
-    //   container: this.$refs.mymap as HTMLElement,
-    //   style
-    // });
-
-    // this.$emit("mapload", this.m);
   },
   computed: {
     ...mapGetters(["map", "layers"])
   },
   components: {
     LayerControl,
-    Geocoder
+    Geocoder,
+    MapTooltip
   }
 });
 </script>
