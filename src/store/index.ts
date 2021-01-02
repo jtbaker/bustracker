@@ -221,7 +221,6 @@ export default new Vuex.Store({
   state: {
     map: {} as Map,
     marker: new Marker({ color: "orange" }),
-    popup: new Popup({ className: "tooltip", offset: [0, -20] }),
     hoverFeature: null as Properties | null,
     hoverLayer: null as string | null,
     layers
@@ -239,7 +238,6 @@ export default new Vuex.Store({
 
       this.dispatch("setBuses");
 
-      state.popup.addTo(state.map);
 
       state.map.addControl(
         new NavigationControl({
@@ -255,20 +253,14 @@ export default new Vuex.Store({
 
       state.map.on("mousemove", e => {
         const features = state.map.queryRenderedFeatures(e.point)
-        // state.popup.addTo(state.map).setLngLat(e.lngLat);
-        
         const { properties, layer } = features.length ? features[0] : {properties: null, layer: null};
         const { style } = state.map.getCanvas()
         style.cursor = layer ? "pointer" : ""
         this.commit("setHoverFeature", properties)
         this.commit("setHoverLayer", layer ? layer.id : null)
-        
-        // state.popup.setHTML(JSONToTable(properties));
       });
 
-      state.map.on("mouseout", "buses", () => {
-        state.popup.remove();
-      });
+
 
       setInterval(async () => {
         this.dispatch("setBuses");
