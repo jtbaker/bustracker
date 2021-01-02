@@ -4,22 +4,15 @@
       v-show="hoverFeature"
       class="bg-opacity-90 bg-blue-900 text-white rounded-sm shadow-xl"
     >
-      <table
-        v-if="hoverFeature"
-        class="border-separate p-2"
-        style="border-spacing: .5em .5em .5em .5em;"
-      >
+      <table v-if="hoverFeature">
         <tbody>
-          <tr class="text-left" v-for="(item, key) in hoverFeature" :key="key">
-            <th
-              class="mr-5"
-              v-if="!(typeof item === 'string' && item.slice(0, 1) === '{')"
-            >
-              {{ capitalize(key) }}
-            </th>
-            <td v-if="!(typeof item === 'string' && item.slice(0, 1) === '{')">
-              <p>{{ item }}</p>
-            </td>
+          <tr
+            class="text-left"
+            v-for="(item, key) in hoverFeature"
+            :key="key"
+          >
+            <th v-if="!(typeof item ==='string' && item.slice(0,1)==='{')">{{ capitalize(key) }}</th>
+            <td v-if="!(typeof item ==='string' && item.slice(0,1)==='{')"><p>{{ item }}</p></td>
           </tr>
         </tbody>
       </table>
@@ -30,7 +23,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { mapGetters } from "vuex";
-import { capitalize } from "@/store/index";
+import { capitalize } from "@/store/index"
 
 interface Properties {
   [key: string]: string | number | boolean;
@@ -44,14 +37,14 @@ export default Vue.extend({
     // }
   },
   methods: {
-    capitalize
+      capitalize
   },
   data() {
     return {};
   },
   computed: {
-    ...mapGetters(["hoverFeature"])
-  }
+    ...mapGetters(["hoverFeature"]),
+  },
 });
 </script>
 

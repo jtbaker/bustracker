@@ -3,7 +3,7 @@
     <div class="fixed space-y-2 z-50 my-2 ml-2">
       <layer-control />
       <geocoder />
-      <map-tooltip />
+      <map-tooltip/>
     </div>
   </div>
 </template>
