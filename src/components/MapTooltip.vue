@@ -4,14 +4,14 @@
       v-show="hoverFeature"
       class="bg-opacity-90 bg-blue-900 text-white rounded-sm shadow-xl"
     >
-      <table v-if="hoverFeature">
+      <table v-if="hoverFeature" class="border-separate p-2" style="border-spacing: .5em .5em .5em .5em;">
         <tbody>
           <tr
             class="text-left"
             v-for="(item, key) in hoverFeature"
             :key="key"
           >
-            <th v-if="!(typeof item ==='string' && item.slice(0,1)==='{')">{{ capitalize(key) }}</th>
+            <th class="mr-5" v-if="!(typeof item ==='string' && item.slice(0,1)==='{')">{{ capitalize(key) }}</th>
             <td v-if="!(typeof item ==='string' && item.slice(0,1)==='{')"><p>{{ item }}</p></td>
           </tr>
         </tbody>
