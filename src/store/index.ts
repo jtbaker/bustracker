@@ -19,10 +19,10 @@ import { FeatureCollection, Feature } from "geojson";
 
 import Pbf from "pbf";
 
-function capitalize(word: string): string {
+export function capitalize(word: string): string {
   const words = word
     .split("_")
-    .map(v => v.charAt(0).toUpperCase() + v.slice(1));
+    .map(v => v.charAt(0).toUpperCase() + v.slice(1).toLowerCase());
   return words.join(" ");
 }
 
@@ -37,7 +37,13 @@ export function easeToBeartingTransform(map: Map, to: LngLat) {
   const p1 = map.getCenter();
   const targetBearing = (bearing(p1, to) + 180) % 360;
   const zoom = Math.random() + 8 * (Math.random() + 1);
-  map.easeTo({ center: to, bearing: targetBearing, pitch: 45, zoom, duration: 1000 });
+  map.easeTo({
+    center: to,
+    bearing: targetBearing,
+    pitch: 45,
+    zoom,
+    duration: 1000
+  });
 }
 
 function setHoverFeatureListener(layerId: string, source: string, map: Map) {
@@ -207,11 +213,16 @@ const layers: LayerGroup = {
   ]
 };
 
+interface Properties {
+  [key: string]: string | number | boolean | null;
+}
+
 export default new Vuex.Store({
   state: {
     map: {} as Map,
     marker: new Marker({ color: "orange" }),
-    popup: new Popup({ className: "tooltip", offset: [0, -20] }),
+    hoverFeature: null as Properties | null,
+    hoverLayer: null as string | null,
     layers
   },
   mutations: {
@@ -227,8 +238,6 @@ export default new Vuex.Store({
 
       this.dispatch("setBuses");
 
-      state.popup.addTo(state.map);
-
       state.map.addControl(
         new NavigationControl({
           showCompass: true,
@@ -241,20 +250,26 @@ export default new Vuex.Store({
       state.map.addControl(new ScaleControl(), "bottom-left");
       state.map.addControl(new FullscreenControl(), "top-right");
 
-      state.map.on("mousemove", "buses", e => {
-        state.popup.addTo(state.map).setLngLat(e.lngLat);
-        const { properties } = e.features[0];
-
-        state.popup.setHTML(JSONToTable(properties));
-      });
-
-      state.map.on("mouseout", "buses", () => {
-        state.popup.remove();
+      state.map.on("mousemove", e => {
+        const features = state.map.queryRenderedFeatures(e.point);
+        const { properties, layer } = features.length
+          ? features[0]
+          : { properties: null, layer: null };
+        const { style } = state.map.getCanvas();
+        style.cursor = layer ? "pointer" : "";
+        this.commit("setHoverFeature", properties);
+        this.commit("setHoverLayer", layer ? layer.id : null);
       });
 
       setInterval(async () => {
         this.dispatch("setBuses");
       }, 10000);
+    },
+    setHoverFeature(state, payload: Properties | null): void {
+      state.hoverFeature = payload;
+    },
+    setHoverLayer(state, layer: string | null) {
+      state.hoverLayer = layer;
     },
     toggleLayer(
       state,
@@ -289,6 +304,12 @@ export default new Vuex.Store({
     },
     marker(state) {
       return state.marker;
+    },
+    hoverFeature(state) {
+      return state.hoverFeature;
+    },
+    hoverLayer(state) {
+      return state.hoverLayer;
     }
   },
   modules: {}

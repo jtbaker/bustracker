@@ -8,20 +8,19 @@
       class="font-bold p-1 outline-none bg-gray-400"
       v-model="inp"
     />
-    <hr>
+    <hr />
 
-
-      <div
-        v-for="opt in options"
-        :key="opt.properties.place_id"
-        :value="opt"
-        class="hover:bg-gray-400"
-        @click="sel=opt"
-      >
-        <span class="flex-wrap overflow-hidden">
-          {{ opt.properties.display_name }}
-        </span></div
-      >
+    <div
+      v-for="opt in options"
+      :key="opt.properties.place_id"
+      :value="opt"
+      class="hover:bg-gray-400"
+      @click="sel = opt"
+    >
+      <span class="flex-wrap overflow-hidden">
+        {{ opt.properties.display_name }}
+      </span>
+    </div>
   </div>
 </template>
 
@@ -36,7 +35,6 @@ async function GetOSMData(q: string, bbox?: number[]) {
   //   const bboxQuery = bbox
   //     ? `&viewbox=${encodeURIComponent(bbox.join(","))}&bounded=1`
   //     : "";
-  console.log(bbox.join(","))
   const bboxQuery = `&viewbox=${encodeURIComponent(
     "-98.0,29.0,-96.0,31.0"
   )}&bounded=1`;
