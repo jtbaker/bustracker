@@ -5,7 +5,6 @@ import Vuex from "vuex";
 import {
   Map,
   GeoJSONSource,
-  Popup,
   Marker,
   ScaleControl,
   GeolocateControl,
@@ -14,7 +13,7 @@ import {
   LngLat
 } from "mapbox-gl";
 import style from "./mapstyle";
-import { Entity, LayerGroup, Layer } from "./types";
+import { Entity, LayerGroup } from "./types";
 import { FeatureCollection, Feature } from "geojson";
 
 import Pbf from "pbf";
@@ -82,44 +81,26 @@ function setHoverFeatureListener(layerId: string, source: string, map: Map) {
   });
 }
 
-function JSONToTable(object: Record<string, any>): string {
-  const t = `
-  <table>
-    <tbody>
-    ${Object.keys(object)
-      .map(k => {
-        const value = object[k];
-        return typeof object[k] !== "string"
-          ? ""
-          : `
-      <tr>
-        <th>${capitalize(k)}</th><td>${value}</td>
-      </tr>`;
-      })
-      .join("")}
-    </tbody>
-  </table>
-  `;
-  // const t = document.createElement("table");
-  // const body = document.createElement("tbody");
-  // for (const key in object) {
-  //   if (!(typeof object[key] == "string" && object[key].slice(0, 2) == `{"`)) {
-  //     const row = document.createElement("tr");
-  //     const label = document.createElement("th");
-
-  //     label.style["text-align"] = "left";
-  //     const val = document.createElement("td");
-  //     val.style["text-align"] = "left";
-  //     label.innerText = capitalize(key);
-  //     val.innerText = object[key];
-  //     row.appendChild(label);
-  //     row.appendChild(val);
-  //     body.appendChild(row);
-  //   }
-  // }
-  // t.appendChild(body);
-  return t;
-}
+// function JSONToTable(object: Record<string, any>): string {
+//   const t = `
+//   <table>
+//     <tbody>
+//     ${Object.keys(object)
+//       .map(k => {
+//         const value = object[k];
+//         return typeof object[k] !== "string"
+//           ? ""
+//           : `
+//       <tr>
+//         <th>${capitalize(k)}</th><td>${value}</td>
+//       </tr>`;
+//       })
+//       .join("")}
+//     </tbody>
+//   </table>
+//   `;
+//   return t;
+// }
 
 // const buffer = require("./gtfs.proto");
 
@@ -273,18 +254,14 @@ export default new Vuex.Store({
     },
     toggleLayer(
       state,
-      {
-        layer_id,
-        group,
-        visible
-      }: { layer_id: string; group: LayerGroup; visible: boolean }
+      { layer_id, visible }: { layer_id: string; visible: boolean }
     ) {
       state.map.setLayoutProperty(
         layer_id,
         "visibility",
         visible ? "visible" : "none"
       );
-      const n = group;
+      // const n = group;
     }
   },
   actions: {

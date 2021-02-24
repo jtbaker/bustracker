@@ -31,10 +31,7 @@ import { mapGetters } from "vuex";
 import { Map, Marker, LngLat } from "mapbox-gl";
 import { easeToBeartingTransform } from "@/store/index";
 
-async function GetOSMData(q: string, bbox?: number[]) {
-  //   const bboxQuery = bbox
-  //     ? `&viewbox=${encodeURIComponent(bbox.join(","))}&bounded=1`
-  //     : "";
+async function GetOSMData(q: string) {
   const bboxQuery = `&viewbox=${encodeURIComponent(
     "-98.0,29.0,-96.0,31.0"
   )}&bounded=1`;
