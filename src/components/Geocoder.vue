@@ -72,12 +72,7 @@ export default Vue.extend({
         this.marker.remove();
         clearTimeout(this.timeout);
         this.timeout = setTimeout(async () => {
-          const bbox = this.map
-            .getBounds()
-            .toArray()
-            .flatMap(v => v);
-
-          const response = await GetOSMData(value, bbox);
+          const response = await GetOSMData(value);
           this.options = response.features;
           (this.map as Map).resize();
         }, 200);
