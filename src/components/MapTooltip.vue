@@ -17,8 +17,12 @@
             >
               {{ capitalize(key) }}
             </th>
-            <td v-if="!(typeof item === 'string' && item.slice(0, 1) === '{')">
-              <p>{{ item }}</p>
+            <td
+              v-if="
+                !(typeof item === 'string' && item.slice(0, 1) === '{') && item
+              "
+            >
+              <p>{{ formatter(key, item) }}</p>
             </td>
           </tr>
         </tbody>
@@ -36,6 +40,33 @@ interface Properties {
   [key: string]: string | number | boolean;
 }
 
+/*
+ * Various specific formatting rules for data fields.
+ */
+const formatter = (key: string, value: string | number | boolean) => {
+  const t = typeof value;
+  if (key === "timestamp" && t === "number") {
+    const d = new Date((value as number) * 1000);
+    return d.toLocaleTimeString();
+  }
+  switch (t) {
+    case "string":
+      return capitalize(value as string);
+      break;
+    case "number":
+      if (value == (+value).toFixed(0)) {
+        return (value as number).toFixed(0);
+      }
+      return (value as number).toFixed(2);
+      break;
+    case "boolean":
+      return value;
+      break;
+    default:
+      return "";
+  }
+};
+
 export default Vue.extend({
   props: {
     // hoverFeature: {
@@ -44,7 +75,8 @@ export default Vue.extend({
     // }
   },
   methods: {
-    capitalize
+    capitalize,
+    formatter
   },
   data() {
     return {};

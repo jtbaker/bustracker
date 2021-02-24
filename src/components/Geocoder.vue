@@ -31,10 +31,7 @@ import { mapGetters } from "vuex";
 import { Map, Marker, LngLat } from "mapbox-gl";
 import { easeToBeartingTransform } from "@/store/index";
 
-async function GetOSMData(q: string, bbox?: number[]) {
-  //   const bboxQuery = bbox
-  //     ? `&viewbox=${encodeURIComponent(bbox.join(","))}&bounded=1`
-  //     : "";
+async function GetOSMData(q: string) {
   const bboxQuery = `&viewbox=${encodeURIComponent(
     "-98.0,29.0,-96.0,31.0"
   )}&bounded=1`;
@@ -75,12 +72,7 @@ export default Vue.extend({
         this.marker.remove();
         clearTimeout(this.timeout);
         this.timeout = setTimeout(async () => {
-          const bbox = this.map
-            .getBounds()
-            .toArray()
-            .flatMap(v => v);
-
-          const response = await GetOSMData(value, bbox);
+          const response = await GetOSMData(value);
           this.options = response.features;
           (this.map as Map).resize();
         }, 200);

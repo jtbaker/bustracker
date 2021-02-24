@@ -10,7 +10,6 @@
 <script lang="ts">
 import Vue from "vue";
 import { mapGetters } from "vuex";
-import { Map } from "mapbox-gl";
 import LayerControl from "./LayerControl.vue";
 import Geocoder from "./Geocoder.vue";
 import MapTooltip from "./MapTooltip.vue";
