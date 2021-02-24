@@ -17,8 +17,12 @@
             >
               {{ capitalize(key) }}
             </th>
-            <td v-if="!(typeof item === 'string' && item.slice(0, 1) === '{')">
-              <p>{{ item }}</p>
+            <td
+              v-if="
+                !(typeof item === 'string' && item.slice(0, 1) === '{') && item
+              "
+            >
+              <p>{{ formatter(key, item) }}</p>
             </td>
           </tr>
         </tbody>
@@ -71,7 +75,8 @@ export default Vue.extend({
     // }
   },
   methods: {
-    capitalize
+    capitalize,
+    formatter
   },
   data() {
     return {};
