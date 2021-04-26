@@ -176,7 +176,7 @@ Vue.use(Vuex);
 const layers: LayerGroup = {
   basemaps: [
     { layer_ids: ["carto"], layer_label: "Carto", visible: true },
-    { layer_ids: ["google"], layer_label: "Google", visible: false }
+    // { layer_ids: ["google"], layer_label: "Google", visible: false }
   ],
   overlays: [
     { layer_ids: ["buses"], layer_label: "Buses", visible: true },
