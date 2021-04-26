@@ -12,18 +12,18 @@ const style: Style = {
     carto: {
       type: "raster",
       tiles: [
-        "https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-        "https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",
-        "https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png"
+        "https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+        "https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png",
+        "https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png"
       ],
-      tileSize: 200,
+      tileSize: 256,
       attribution: "Carto Maps"
     },
-    google: {
-      type: "raster",
-      tileSize: 200,
-      tiles: ["https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"]
-    },
+    // google: {
+    //   type: "raster",
+    //   tileSize: 200,
+    //   tiles: ["https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}"]
+    // },
     buses: {
       type: "geojson",
       data: {
@@ -47,14 +47,14 @@ const style: Style = {
       source: "carto",
       type: "raster"
     },
-    {
-      id: "google",
-      source: "google",
-      type: "raster",
-      layout: {
-        visibility: "none"
-      }
-    },
+    // {
+    //   id: "google",
+    //   source: "google",
+    //   type: "raster",
+    //   layout: {
+    //     visibility: "none"
+    //   }
+    // },
     {
       id: "routes",
       type: "line",
